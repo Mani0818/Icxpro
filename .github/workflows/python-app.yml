@@ -1,0 +1,31 @@
+# .github/workflows/run-email-validator.yml
+
+name: Run Email Validator
+
+on:
+  push:
+    branches:
+      - main  # Run when changes are pushed to the 'main' branch
+  pull_request:
+    branches:
+      - main  # Run on pull requests to 'main' branch
+
+jobs:
+  run-email-validator:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code from the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'  # Specify the Python version
+
+      # Step 3: Run the Python script
+      - name: Run email validator script
+        run: |
+          python email_validator.py
