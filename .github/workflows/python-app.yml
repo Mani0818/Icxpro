@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      USERNAME: ec2-user  # Change to the correct user for your instance
+      USERNAME: ec2-user  # Change to 'ubuntu' if your EC2 instance uses Ubuntu
 
     steps:
     - name: Checkout code
