@@ -1,33 +1,37 @@
-# .github/workflows/deploy-to-ec2.yml
-
-name: Deploy to EC2
+name: Deploy to AWS EC2
 
 on:
   push:
     branches:
-      - main  # Run the workflow when code is pushed to the main branch
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
-      - name: Checkout Code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      # Step 2: Set up SSH to connect to the EC2 instance
-      - name: Install SSH Key
-        uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}  # Store your private SSH key in GitHub Secrets
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
 
-      # Step 3: Deploy the Python script to the EC2 instance
-      - name: Copy script to EC2
-        run: |
-          scp -o StrictHostKeyChecking=no email_validator.py ec2-user@${{ secrets.EC2_HOST }}:/home/ec2-user/
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
 
-      # Step 4: Run the script on the EC2 instance
-      - name: Execute script on EC2
-        run: |
-          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} "python3 /home/ec2-user/email_validator.py"
+    - name: Copy files to EC2
+      run: |
+        echo "${{ secrets.EC2_SSH_KEY }}" > private_key.pem
+        chmod 600 private_key.pem
+        scp -o StrictHostKeyChecking=no -i private_key.pem email_validator.py ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/
+      env:
+        PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+
+    - name: Deploy to EC2 via SSH
+      run: |
+        echo "${{ secrets.EC2_SSH_KEY }}" > private_key.pem
+        chmod 600 private_key.pem
+        ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ secrets.EC2_HOST }} "cd /home/ubuntu && git pull origin main && source venv/bin/activate && pip install -r requirements.txt && sudo systemctl restart myapp.service"
