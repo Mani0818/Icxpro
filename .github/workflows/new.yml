@@ -1,0 +1,32 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      USERNAME: ec2-user  # Change to 'ubuntu' if your EC2 instance uses Ubuntu
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Debug EC2 Instance IP
+      run: echo "EC2_INSTANCE_IP: ${{ secrets.EC2_INSTANCE_IP }}"
+
+    - name: Debug Username
+      run: echo "Connecting with username: ${{ env.USERNAME }}"
+
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+    - name: Copy files to EC2
+      run: |
+        scp -o StrictHostKeyChecking=no AddressValidator.py ${USERNAME}@${{ secrets.EC2_INSTANCE_IP }}:/home/ec2-user/
