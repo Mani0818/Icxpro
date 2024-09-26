@@ -26,4 +26,4 @@ jobs:
 
     - name: Copy files to EC2
       run: |
-        scp -o StrictHostKeyChecking=no email_validator.py ${USERNAME}@${{ secrets.EC2_INSTANCE_IP }}:/home/ec2-user/
+        scp -o StrictHostKeyChecking=no AddressValidator.py ${USERNAME}@${{ secrets.EC2_INSTANCE_IP }}:/home/ec2-user/
