@@ -19,10 +19,11 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
+   
     - name: Copy files to EC2 instance
       run: |
-        scp -r -o StrictHostKeyChecking=no ./path/to/your/files ${{ secrets.USERNAME }}@<EC2_INSTANCE_IP>:/path/to/deploy/
+        scp -r -o StrictHostKeyChecking=no main.py ${{ secrets.USERNAME }}@${{ secrets.EC2_INSTANCE_IP }}:/path/to/deploy/
 
     - name: SSH into EC2 and run deployment script
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@<EC2_INSTANCE_IP> 'bash -s' < ./path/to/your/deployment_script.sh
+        ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.EC2_INSTANCE_IP }} 'bash -s' < ./path/to/your/deployment_script.sh
