@@ -6,6 +6,7 @@ def addressVal(address):
     elif (at == -1):
         print("Invalid")
     else:
+        
         print("Valid")
 
 print("This program will decide if your input is a valid email address")
